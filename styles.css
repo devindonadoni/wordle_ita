@@ -1,0 +1,149 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #262522;
+    margin: 0;
+}
+
+.centerword {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Contenitore per la griglia */
+.grid-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+/* Righe della griglia */
+.grid-row {
+    display: flex;
+    gap: 15px;
+}
+
+/* Stile delle caselle di input per le lettere */
+.elementletter {
+    font-size: 36px;
+    font-weight: bold;
+    width: 80px;
+    height: 80px;
+    text-align: center;
+    background-color: #262522;
+    border: 2px solid #454442; 
+    outline: none;
+    text-transform: uppercase;
+    color: white;
+}
+
+/* Stile del campo di input */
+.textinput {
+    font-size: 16px;
+    width: 100%;
+    max-width: 200px;
+    height: 40px;
+    text-align: center;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    margin-right: 10px;
+    background-color: #454442;
+    color: white;
+}
+
+/* Stile del pulsante submit */
+.submitbutton {
+    max-width: 140px;
+    height: 45px;
+    font-size: 16px;
+    border-radius: 5px;
+    color: aliceblue;
+    background-color: #b30713;
+}
+
+/* Contenitore per input e pulsante */
+.input-container {
+    display: flex;
+    gap: 10px;
+}
+
+/*-----------------------------------------------------------------------------------*/
+
+.win-message {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    display: none; 
+}
+
+.win-message button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    background-color: #104503;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.game-over {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    display: none; 
+}
+
+.game-over button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    background-color: #b30713;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.missing-word {
+    color: white;
+    font-weight: bold;
+    white-space: nowrap;
+    font-size: 26px;
+    background-color: #454442;
+    height: 30px;
+    width: auto; /* Cambia width da 100px a auto per adattarsi al contenuto */
+    display: none; /* Nasconde il messaggio di errore per impostazione predefinita */
+    border: 2px solid #454442;
+    margin-bottom: 30px;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center; /* Centra il testo orizzontalmente */
+}

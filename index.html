@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WORDLE</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="centerword">
+        <h1 id="errorMessage" class="missing-word">parola inesistente</h1>
+
+        <!-- Griglia principale -->
+        <div class="grid-container">
+            <!-- Generazione dinamica della griglia -->
+            <div class="grid-row">
+                <input type="text" class="elementletter" id="C1R1" readonly value="">
+                <input type="text" class="elementletter" id="C1R2" readonly value="">
+                <input type="text" class="elementletter" id="C1R3" readonly value="">
+                <input type="text" class="elementletter" id="C1R4" readonly value="">
+                <input type="text" class="elementletter" id="C1R5" readonly value="">
+            </div>
+            <div class="grid-row">
+                <input type="text" class="elementletter" id="C2R1" readonly value="">
+                <input type="text" class="elementletter" id="C2R2" readonly value="">
+                <input type="text" class="elementletter" id="C2R3" readonly value="">
+                <input type="text" class="elementletter" id="C2R4" readonly value="">
+                <input type="text" class="elementletter" id="C2R5" readonly value="">
+            </div>
+            <div class="grid-row">
+                <input type="text" class="elementletter" id="C3R1" readonly value="">
+                <input type="text" class="elementletter" id="C3R2" readonly value="">
+                <input type="text" class="elementletter" id="C3R3" readonly value="">
+                <input type="text" class="elementletter" id="C3R4" readonly value="">
+                <input type="text" class="elementletter" id="C3R5" readonly value="">
+            </div>
+            <div class="grid-row">
+                <input type="text" class="elementletter" id="C4R1" readonly value="">
+                <input type="text" class="elementletter" id="C4R2" readonly value="">
+                <input type="text" class="elementletter" id="C4R3" readonly value="">
+                <input type="text" class="elementletter" id="C4R4" readonly value="">
+                <input type="text" class="elementletter" id="C4R5" readonly value="">
+            </div>
+            <div class="grid-row">
+                <input type="text" class="elementletter" id="C5R1" readonly value="">
+                <input type="text" class="elementletter" id="C5R2" readonly value="">
+                <input type="text" class="elementletter" id="C5R3" readonly value="">
+                <input type="text" class="elementletter" id="C5R4" readonly value="">
+                <input type="text" class="elementletter" id="C5R5" readonly value="">
+            </div>
+        </div>
+        <!-- Campo input e pulsante submit -->
+        <div class="input-container">
+            <input type="text" class="textinput" id="text" placeholder="Inserisci la parola" oninput="submitState()">
+            <input type="submit" class="submitbutton" id="submit" value="SUBMIT" disabled onclick="submitWord()">
+        </div>
+    </div>
+
+    <div id="winMessage" class="win-message">
+        Hai vinto!
+        <button onclick="reloadGame()">Rigioca</button>
+    </div>
+
+    <div id="gameOver" class="game-over">
+        hai perso...
+        <button onclick="reloadGame()">Riprova</button>
+    </div>
+</body>
+
+<script>
+    const paroladelgiorno = ""; // La parola da indovinare
+    let currentRow = 1; // La riga corrente inizia da 1
+
+    // Lista di parole italiane di cinque lettere (aggiungere altre parole per un totale di 1000 o più)
+    const paroleItaliane = [
+        "acqua", "abbia", "abito", "adore", "alber", "alito", "amici", "amore", "anima",
+        "apice", "aroma", "avere", "bacio", "banca", "barca", "bello", "bioma", "bocca",
+        "bolla", "bravo", "caffe", "caldo", "carlo", "carta", "casco", "cello", "cena",
+        "cerco", "cielo", "cigno", "citta", "cocco", "colle", "corso", "crema", "cuore",
+        "dente", "dolce", "donna", "fagiu", "fango", "festa", "fuoco", "gioco", "giova",
+        "globo", "grano", "guida", "ilari", "inseg", "latte", "libri", "lutto", "mareo",
+        "mamma", "maree", "matto", "melmo", "messa", "metro", "mille", "moda", "morso",
+        "motto", "muroo", "nafta", "nasca", "nelci", "nervo", "notte", "olioe", "onda",
+        "opere", "oretta", "ottio", "piano", "pista", "pluma", "quale", "quasi", "raggio",
+        "rapido", "regia", "retta", "rinom", "rotta", "rughe", "sabbi", "saleo", "sasso",
+        "scena", "scopo", "segre", "senso", "sesto", "sogni", "sorte", "spuma", "stile",
+        "stola", "stria", "sudor", "tavolo", "teore", "tigre", "tinto", "trova", "turbo",
+        "uscita", "valle", "vango", "vapor", "vesta", "vigna", "vitro", "volta", "vuoto",
+        "zebra", "zocca", "acido", "alibi", "alone", "antro", "arrivo", "asilo", "atomo",
+        "balzo", "barba", "barco", "belle", "bimbo", "bocce", "bolla", "bravo", "brici",
+        "buono", "cacao", "calma", "carta", "cerco", "cesto", "cicli", "cinque", "collo",
+        "colpa", "corvo", "cuoco", "daree", "darsi", "disco", "dodo", "fairo", "farro",
+        "fatta", "felic", "fermo", "filo", "forti", "fuori", "gallo", "gioca", "giovo",
+        "giubi", "gusto", "incro", "infer", "intern", "ipote", "lacci", "lacer", "leggi",
+        "libra", "lavor", "maschi", "medie", "mille", "morao", "nuovo", "pago", "pensi",
+        "pesta", "plume", "quest", "reddo", "relax", "salvi", "secco", "segui", "setti",
+        "sogni", "soleo", "sordo", "spargi", "speci", "spese", "tasso", "tavole", "trama",
+        "treno", "truci", "unico", "vacca", "valle", "visti", "vivi", "zollo", "zucca",
+        "zuppa", "abbin", "abola", "acale", "adaio", "adame", "alato", "alveo", "andare",
+        "antoe", "apice", "asilo", "ateci", "avvio", "banjo", "bando", "benza", "biano",
+        "bocca", "bozzl", "bravo", "buono", "cacca", "carro", "catto", "ciare", "colpa",
+        "cuore", "dalla", "donna", "ebano", "fiera", "fondo", "fucio", "gancia", "gioca",
+        "gusto", "iteco", "lobby", "lotto", "luogo", "massi", "nuovo", "oblia", "pasta",
+        "piano", "pique", "pluma", "rende", "rondo", "sarda", "scent", "siamo", "tonto",
+        "tuono", "vallo", "visto", "votae", "votare","porta","atrio","torno","campo","manca",
+        // ... altre parole italiane di 5 lettere
+    ];
+
+    function getText() {
+        const text = document.getElementById("text").value;
+        return text.length === 5 ? text : null; // Ritorna null se l'input non è di 5 lettere
+    }
+
+    function submitState() {
+        const button = document.getElementById("submit");
+        const text = getText();
+        button.disabled = !text;
+        if (!button.disabled)
+            button.style.backgroundColor = "#104503";
+        else
+            button.style.backgroundColor = "#b30713";
+    }
+
+    function submitWord() {
+        const text = getText();
+
+        // Verifica che la parola sia nella lista delle parole italiane
+        if (text && paroleItaliane.includes(text.toLowerCase())) {
+            document.getElementById("errorMessage").style.display = "none"; // Nasconde l'errore
+
+            const arrayText = text.toLowerCase().split('');
+            const arrayParola = paroladelgiorno.toLowerCase().split('');
+            document.getElementById("text").value = "";
+            document.getElementById("submit").disabled = true;
+
+            let vittoria = true;
+
+            if (currentRow <= 5) {
+                for (let i = 0; i < arrayText.length; i++) {
+                    const inputElement = document.getElementById(`C${currentRow}R${i + 1}`);
+                    inputElement.value = text[i];
+
+                    if (arrayText[i] === arrayParola[i]) {
+                        inputElement.style.color = "#ffffff";
+                        inputElement.style.backgroundColor = "#104503"; // Verde
+                    } else if (arrayParola.includes(arrayText[i])) {
+                        inputElement.style.color = "#ffffff";
+                        inputElement.style.backgroundColor = "#edba2d"; // Giallo
+                        vittoria = false;
+                    } else {
+                        inputElement.style.color = "#ffffff";
+                        inputElement.style.backgroundColor = "#454442"; // Grigio
+                        vittoria = false;
+                    }
+                }
+
+                if (vittoria) {
+                    document.getElementById("winMessage").style.display = "flex";
+                }
+
+                currentRow++;
+            } else {
+                document.getElementById("gameOver").style.display = "flex";
+            }
+        } else {
+            document.getElementById("errorMessage").style.display = "block"; // Mostra il messaggio di errore
+        }
+    }
+
+    function reloadGame() {
+        location.reload();
+    }
+</script>
+
+</html>
