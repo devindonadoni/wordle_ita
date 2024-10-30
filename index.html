@@ -6,14 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WORDLE</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="images/logo.png">
 </head>
 
 <body>
     <div class="centerword">
-        <h1 id="errorMessage" class="missing-word">parola inesistente</h1>
-
         <!-- Griglia principale -->
         <div class="grid-container">
+            <h1 id="errorMessage" class="missing-word">parola inesistente</h1>
             <!-- Generazione dinamica della griglia -->
             <div class="grid-row">
                 <input type="text" class="elementletter" id="C1R1" readonly value="">
@@ -70,7 +70,7 @@
 </body>
 
 <script>
-    const paroladelgiorno = ""; // La parola da indovinare
+    const paroladelgiorno = "sauli"; // La parola da indovinare
     let currentRow = 1; // La riga corrente inizia da 1
 
     // Lista di parole italiane di cinque lettere (aggiungere altre parole per un totale di 1000 o più)
@@ -104,7 +104,8 @@
         "cuore", "dalla", "donna", "ebano", "fiera", "fondo", "fucio", "gancia", "gioca",
         "gusto", "iteco", "lobby", "lotto", "luogo", "massi", "nuovo", "oblia", "pasta",
         "piano", "pique", "pluma", "rende", "rondo", "sarda", "scent", "siamo", "tonto",
-        "tuono", "vallo", "visto", "votae", "votare","porta","atrio","torno","campo","manca",
+        "tuono", "vallo", "visto", "votae", "votare", "porta", "atrio", "torno", "campo",
+        "manca", "paese","sauli", "saula",
         // ... altre parole italiane di 5 lettere
     ];
 
@@ -128,7 +129,6 @@
 
         // Verifica che la parola sia nella lista delle parole italiane
         if (text && paroleItaliane.includes(text.toLowerCase())) {
-            document.getElementById("errorMessage").style.display = "none"; // Nasconde l'errore
 
             const arrayText = text.toLowerCase().split('');
             const arrayParola = paroladelgiorno.toLowerCase().split('');
@@ -136,8 +136,10 @@
             document.getElementById("submit").disabled = true;
 
             let vittoria = true;
+            const usedIndices = new Set(); // Per tenere traccia degli indici già abbinati
 
             if (currentRow <= 5) {
+                // Primo passaggio: controlla e assegna il verde per le lettere nella posizione corretta
                 for (let i = 0; i < arrayText.length; i++) {
                     const inputElement = document.getElementById(`C${currentRow}R${i + 1}`);
                     inputElement.value = text[i];
@@ -145,14 +147,36 @@
                     if (arrayText[i] === arrayParola[i]) {
                         inputElement.style.color = "#ffffff";
                         inputElement.style.backgroundColor = "#104503"; // Verde
-                    } else if (arrayParola.includes(arrayText[i])) {
-                        inputElement.style.color = "#ffffff";
-                        inputElement.style.backgroundColor = "#edba2d"; // Giallo
-                        vittoria = false;
+                        usedIndices.add(i); // Salva l'indice già assegnato come corretto
                     } else {
-                        inputElement.style.color = "#ffffff";
-                        inputElement.style.backgroundColor = "#454442"; // Grigio
                         vittoria = false;
+                    }
+                }
+
+                // Secondo passaggio: controlla e assegna il giallo o grigio per le lettere rimanenti
+                for (let i = 0; i < arrayText.length; i++) {
+                    const inputElement = document.getElementById(`C${currentRow}R${i + 1}`);
+                    if (!usedIndices.has(i)) { // Solo per lettere non corrette in posizione
+                        if (arrayParola.includes(arrayText[i])) {
+                            // Controlla se esiste un match della lettera in una posizione diversa che non è già stato abbinato
+                            let found = false;
+                            for (let j = 0; j < arrayParola.length; j++) {
+                                if (arrayParola[j] === arrayText[i] && !usedIndices.has(j)) {
+                                    inputElement.style.color = "#ffffff";
+                                    inputElement.style.backgroundColor = "#edba2d"; // Giallo
+                                    usedIndices.add(j); // Marca l'indice come abbinato
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (!found) {
+                                inputElement.style.color = "#ffffff";
+                                inputElement.style.backgroundColor = "#454442"; // Grigio
+                            }
+                        } else {
+                            inputElement.style.color = "#ffffff";
+                            inputElement.style.backgroundColor = "#454442"; // Grigio
+                        }
                     }
                 }
 
