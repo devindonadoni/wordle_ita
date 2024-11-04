@@ -72,6 +72,7 @@
 <script>
     const paroladelgiorno = "sauli"; // La parola da indovinare
     let currentRow = 1;
+    let tentativi = 0;
 
     const paroleItaliane = ["acqua", "abbia", "abito", "adore", "alber", "alito", "amici", "amore", "anima",
         "apice", "aroma", "avere", "bacio", "banca", "barca", "bello", "bioma", "bocca",
@@ -127,66 +128,62 @@
 
     // Verifica che la parola sia nella lista delle parole italiane
     if (text && paroleItaliane.includes(text.toLowerCase())) {
-
+        tentativi++;
         const arrayText = text.toLowerCase().split('');
         const arrayParola = paroladelgiorno.toLowerCase().split('');
         document.getElementById("text").value = "";
         document.getElementById("submit").disabled = true;
 
         let vittoria = true;
-        const usedIndices = new Set(); // Per tenere traccia degli indici già abbinati in paroladelgiorno
-        const matchedLetters = {}; // Oggetto per contare le lettere abbinate nel tentativo utente
+        const usedIndices = new Set();
+        const matchedLetters = {};
 
-        if (currentRow <= 5) {
-            // Primo passaggio: controlla e assegna il verde per le lettere nella posizione corretta
-            for (let i = 0; i < arrayText.length; i++) {
-                const inputElement = document.getElementById(`C${currentRow}R${i + 1}`);
-                inputElement.value = text[i];
+        // Primo passaggio: controlla e assegna il verde
+        for (let i = 0; i < arrayText.length; i++) {
+            const inputElement = document.getElementById(`C${currentRow}R${i + 1}`);
+            inputElement.value = text[i];
 
-                if (arrayText[i] === arrayParola[i]) {
+            if (arrayText[i] === arrayParola[i]) {
+                inputElement.style.color = "#ffffff";
+                inputElement.style.backgroundColor = "#104503"; // Verde
+                usedIndices.add(i);
+                matchedLetters[arrayText[i]] = (matchedLetters[arrayText[i]] || 0) + 1;
+            } else {
+                vittoria = false;
+            }
+        }
+
+        // Secondo passaggio: controlla e assegna il giallo o grigio
+        for (let i = 0; i < arrayText.length; i++) {
+            const inputElement = document.getElementById(`C${currentRow}R${i + 1}`);
+
+            if (!usedIndices.has(i)) {
+                const currentLetter = arrayText[i];
+                const countInSolution = arrayParola.filter(letter => letter === currentLetter).length;
+                const alreadyMatched = matchedLetters[currentLetter] || 0;
+
+                if (arrayParola.includes(currentLetter) && alreadyMatched < countInSolution) {
                     inputElement.style.color = "#ffffff";
-                    inputElement.style.backgroundColor = "#104503"; // Verde
-                    usedIndices.add(i);
-                    matchedLetters[arrayText[i]] = (matchedLetters[arrayText[i]] || 0) + 1; // Conta le lettere abbinate
+                    inputElement.style.backgroundColor = "#edba2d"; // Giallo
+                    matchedLetters[currentLetter] = alreadyMatched + 1;
                 } else {
-                    vittoria = false;
+                    inputElement.style.color = "#ffffff";
+                    inputElement.style.backgroundColor = "#454442"; // Grigio
                 }
             }
+        }
 
-            // Secondo passaggio: controlla e assegna il giallo o grigio per le lettere rimanenti
-            for (let i = 0; i < arrayText.length; i++) {
-                const inputElement = document.getElementById(`C${currentRow}R${i + 1}`);
-                
-                // Verifica solo le lettere non già abbinate come verdi
-                if (!usedIndices.has(i)) {
-                    const currentLetter = arrayText[i];
-                    const countInSolution = arrayParola.filter(letter => letter === currentLetter).length;
-                    const alreadyMatched = matchedLetters[currentLetter] || 0;
-
-                    if (arrayParola.includes(currentLetter) && alreadyMatched < countInSolution) {
-                        inputElement.style.color = "#ffffff";
-                        inputElement.style.backgroundColor = "#edba2d"; // Giallo
-                        matchedLetters[currentLetter] = alreadyMatched + 1; // Aumenta il conteggio abbinato
-                    } else {
-                        inputElement.style.color = "#ffffff";
-                        inputElement.style.backgroundColor = "#454442"; // Grigio
-                    }
-                }
-            }
-
-            if (vittoria) {
-                document.getElementById("winMessage").style.display = "flex";
-            }
-
-            currentRow++;
-        } else {
+        if (vittoria) {
+            document.getElementById("winMessage").style.display = "flex";
+        } else if (tentativi === 5) {
             document.getElementById("gameOver").style.display = "flex";
+        } else {
+            currentRow++;
         }
     } else {
-        document.getElementById("errorMessage").style.display = "block"; // Mostra il messaggio di errore
+        document.getElementById("errorMessage").style.display = "block";
     }
 }
-
 
     function reloadGame() {
         location.reload();
@@ -204,8 +201,8 @@
         
         return paroleArray;
         console.log(paroleArray);
-
     }
+    
 </script>
 
 </html>
