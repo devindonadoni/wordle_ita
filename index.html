@@ -71,11 +71,9 @@
 
 <script>
     const paroladelgiorno = "sauli"; // La parola da indovinare
-    let currentRow = 1; // La riga corrente inizia da 1
+    let currentRow = 1;
 
-    // Lista di parole italiane di cinque lettere (aggiungere altre parole per un totale di 1000 o più)
-    const paroleItaliane = [
-        "acqua", "abbia", "abito", "adore", "alber", "alito", "amici", "amore", "anima",
+    const paroleItaliane = ["acqua", "abbia", "abito", "adore", "alber", "alito", "amici", "amore", "anima",
         "apice", "aroma", "avere", "bacio", "banca", "barca", "bello", "bioma", "bocca",
         "bolla", "bravo", "caffe", "caldo", "carlo", "carta", "casco", "cello", "cena",
         "cerco", "cielo", "cigno", "citta", "cocco", "colle", "corso", "crema", "cuore",
@@ -105,9 +103,9 @@
         "gusto", "iteco", "lobby", "lotto", "luogo", "massi", "nuovo", "oblia", "pasta",
         "piano", "pique", "pluma", "rende", "rondo", "sarda", "scent", "siamo", "tonto",
         "tuono", "vallo", "visto", "votae", "votare", "porta", "atrio", "torno", "campo",
-        "manca", "paese","sauli", "saula",
+        "manca", "paese","sauli", "saula","samil","samir","samli"
         // ... altre parole italiane di 5 lettere
-    ];
+        ];
 
     function getText() {
         const text = document.getElementById("text").value;
@@ -125,76 +123,88 @@
     }
 
     function submitWord() {
-        const text = getText();
+    const text = getText();
 
-        // Verifica che la parola sia nella lista delle parole italiane
-        if (text && paroleItaliane.includes(text.toLowerCase())) {
+    // Verifica che la parola sia nella lista delle parole italiane
+    if (text && paroleItaliane.includes(text.toLowerCase())) {
 
-            const arrayText = text.toLowerCase().split('');
-            const arrayParola = paroladelgiorno.toLowerCase().split('');
-            document.getElementById("text").value = "";
-            document.getElementById("submit").disabled = true;
+        const arrayText = text.toLowerCase().split('');
+        const arrayParola = paroladelgiorno.toLowerCase().split('');
+        document.getElementById("text").value = "";
+        document.getElementById("submit").disabled = true;
 
-            let vittoria = true;
-            const usedIndices = new Set(); // Per tenere traccia degli indici già abbinati
+        let vittoria = true;
+        const usedIndices = new Set(); // Per tenere traccia degli indici già abbinati in paroladelgiorno
+        const matchedLetters = {}; // Oggetto per contare le lettere abbinate nel tentativo utente
 
-            if (currentRow <= 5) {
-                // Primo passaggio: controlla e assegna il verde per le lettere nella posizione corretta
-                for (let i = 0; i < arrayText.length; i++) {
-                    const inputElement = document.getElementById(`C${currentRow}R${i + 1}`);
-                    inputElement.value = text[i];
+        if (currentRow <= 5) {
+            // Primo passaggio: controlla e assegna il verde per le lettere nella posizione corretta
+            for (let i = 0; i < arrayText.length; i++) {
+                const inputElement = document.getElementById(`C${currentRow}R${i + 1}`);
+                inputElement.value = text[i];
 
-                    if (arrayText[i] === arrayParola[i]) {
-                        inputElement.style.color = "#ffffff";
-                        inputElement.style.backgroundColor = "#104503"; // Verde
-                        usedIndices.add(i); // Salva l'indice già assegnato come corretto
-                    } else {
-                        vittoria = false;
-                    }
+                if (arrayText[i] === arrayParola[i]) {
+                    inputElement.style.color = "#ffffff";
+                    inputElement.style.backgroundColor = "#104503"; // Verde
+                    usedIndices.add(i);
+                    matchedLetters[arrayText[i]] = (matchedLetters[arrayText[i]] || 0) + 1; // Conta le lettere abbinate
+                } else {
+                    vittoria = false;
                 }
-
-                // Secondo passaggio: controlla e assegna il giallo o grigio per le lettere rimanenti
-                for (let i = 0; i < arrayText.length; i++) {
-                    const inputElement = document.getElementById(`C${currentRow}R${i + 1}`);
-                    if (!usedIndices.has(i)) { // Solo per lettere non corrette in posizione
-                        if (arrayParola.includes(arrayText[i])) {
-                            // Controlla se esiste un match della lettera in una posizione diversa che non è già stato abbinato
-                            let found = false;
-                            for (let j = 0; j < arrayParola.length; j++) {
-                                if (arrayParola[j] === arrayText[i] && !usedIndices.has(j)) {
-                                    inputElement.style.color = "#ffffff";
-                                    inputElement.style.backgroundColor = "#edba2d"; // Giallo
-                                    usedIndices.add(j); // Marca l'indice come abbinato
-                                    found = true;
-                                    break;
-                                }
-                            }
-                            if (!found) {
-                                inputElement.style.color = "#ffffff";
-                                inputElement.style.backgroundColor = "#454442"; // Grigio
-                            }
-                        } else {
-                            inputElement.style.color = "#ffffff";
-                            inputElement.style.backgroundColor = "#454442"; // Grigio
-                        }
-                    }
-                }
-
-                if (vittoria) {
-                    document.getElementById("winMessage").style.display = "flex";
-                }
-
-                currentRow++;
-            } else {
-                document.getElementById("gameOver").style.display = "flex";
             }
+
+            // Secondo passaggio: controlla e assegna il giallo o grigio per le lettere rimanenti
+            for (let i = 0; i < arrayText.length; i++) {
+                const inputElement = document.getElementById(`C${currentRow}R${i + 1}`);
+                
+                // Verifica solo le lettere non già abbinate come verdi
+                if (!usedIndices.has(i)) {
+                    const currentLetter = arrayText[i];
+                    const countInSolution = arrayParola.filter(letter => letter === currentLetter).length;
+                    const alreadyMatched = matchedLetters[currentLetter] || 0;
+
+                    if (arrayParola.includes(currentLetter) && alreadyMatched < countInSolution) {
+                        inputElement.style.color = "#ffffff";
+                        inputElement.style.backgroundColor = "#edba2d"; // Giallo
+                        matchedLetters[currentLetter] = alreadyMatched + 1; // Aumenta il conteggio abbinato
+                    } else {
+                        inputElement.style.color = "#ffffff";
+                        inputElement.style.backgroundColor = "#454442"; // Grigio
+                    }
+                }
+            }
+
+            if (vittoria) {
+                document.getElementById("winMessage").style.display = "flex";
+            }
+
+            currentRow++;
         } else {
-            document.getElementById("errorMessage").style.display = "block"; // Mostra il messaggio di errore
+            document.getElementById("gameOver").style.display = "flex";
         }
+    } else {
+        document.getElementById("errorMessage").style.display = "block"; // Mostra il messaggio di errore
     }
+}
+
 
     function reloadGame() {
         location.reload();
+    }
+    
+    //NON FUNZIONA SERVE NODE.JS
+    function loadWord() {
+        const fs = require('fs');
+
+        // Leggi il file parole.txt in modo sincrono
+        const data = fs.readFileSync('parole.txt', 'utf-8');
+
+        // Crea un array dividendo il contenuto per linea
+        const paroleArray = data.split('\n').map(parola => parola.trim());
+        
+        return paroleArray;
+        console.log(paroleArray);
+
     }
 </script>
 
