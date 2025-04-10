@@ -2,84 +2,147 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="win-style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <link rel="stylesheet" href="css/win-style.css" />
+  <link rel="icon" type="image/png" href="images/logo-removed.png">
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-    <script src="https://kit.fontawesome.com/1c5c930d58.js" crossorigin="anonymous"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <script src="https://kit.fontawesome.com/1c5c930d58.js" crossorigin="anonymous"></script>
 </head>
+<style>
+  .fa-arrow-left{
+    position: absolute;
+    top: 40px;
+    left: 22%;
+    font-size: 40px;
+  }
 
+  .fa-arrow-left:hover{
+    cursor: pointer;
+    transform: scale(1.1);
+  }
+</style>
 <body>
-    <div class="center">
-        <img src="images/logo-removed.png" alt="">
-        <div class="label">
-            <h1 class="active">Leader Board</h1>
-            <h1>Score Board</h1>
-        </div>
-        <div class="board">
-            <div class="single-position medal" id="1">
-                <i class="fa-solid fa-medal" style="color: #ffd700;"></i>
-                <h1>Dd</h1>
-            </div>
-            <div class="single-position medal" id="2">
-                <i class="fa-solid fa-medal" style="color: #c0c0c0;"></i>
-                <h1>Mc</h1>
-            </div>
-            <div class="single-position medal" id="3">
-                <i class="fa-solid fa-medal" style="color: #CD7F32;"></i>
-                <h1>Mc</h1>
-            </div>
-            <div class="single-position medal" id="4">
-                <i class="posizione">4</i>
-                <h1>Mc</h1>
-            </div>
-        </div>
+  <i class="fa-solid fa-arrow-left" style="color: #ffffff;" onclick="redirect('index.html')"></i>
+
+  <div class="center">
+    <img src="images/logo-removed.png" alt="" />
+    <div class="label">
+      <h1 class="tab active" data-target="leaderboard">Leader Board</h1>
+      <h1 class="tab" data-target="scoreboard">Score Board</h1>
     </div>
-</body>
 
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Leaderboard -->
+    <div class="board board-content" id="leaderboard">
+      <!-- <div class="single-position medal" id="1">
+        <i class="fa-solid fa-medal" style="color: #ffd700"></i>
+        <h1>Dd</h1>
+      </div>
+      <div class="single-position medal" id="2">
+        <i class="fa-solid fa-medal" style="color: #c0c0c0"></i>
+        <h1>Mc</h1>
+      </div>
+      <div class="single-position medal" id="3">
+        <i class="fa-solid fa-medal" style="color: #cd7f32"></i>
+        <h1>Mc</h1>
+      </div>
+      <div class="single-position medal" id="4">
+        <i class="posizione">4</i>
+        <h1>Mc</h1>
+      </div> -->
+    </div>
 
-<script>
+    <!-- Scoreboard -->
+    <div class="board board-content" id="scoreboard" style="display: none;">
+      <!-- <div class="single-position medal" id="1">
+            <i class="fa-solid fa-medal" style="color: #ffd700"></i>
+            <h1>Parola</h1>
+            <h1 style="transform: translateX(20px);">3</h1>
+          </div>
+          <div class="single-position medal" id="2">
+            <i class="fa-solid fa-medal" style="color: #c0c0c0"></i>
+            <h1>Mc</h1>
+            <h1 style="transform: translateX(20px);">3</h1>
+          </div>
+          <div class="single-position medal" id="3">
+            <i class="fa-solid fa-medal" style="color: #cd7f32"></i>
+            <h1>Mc</h1>
+            <h1 style="transform: translateX(20px);">3</h1>
+          </div>
+          <div class="single-position medal" id="4">
+            <i class="posizione">4</i>
+            <h1>Mc</h1>
+            <h1 style="transform: translateX(20px);">3</h1>
+          </div> -->
+    </div>
+  </div>
+
+  <script src="js/load-scoreboard.js"></script>
+  <script src="js/load-classifiche.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+
+  <script>
     $(document).ready(function () {
-        setTimeout(() => autoScale(), 800);
+      setTimeout(() => autoScale(), 800);
+
+      $('.tab').on('click', function () {
+        $('.tab').removeClass('active');
+        $(this).addClass('active');
+
+        // Mostra contenuto corretto
+        const target = $(this).data('target');
+        $('.board-content').hide();
+        $('#' + target).fadeIn(300);
+      });
+
+      loadClassifiche();
+      loadClassificaParole();
     });
 
     function autoScale() {
-        const positions = document.querySelectorAll('.single-position');
+      const positions = document.querySelectorAll('.single-position');
 
-        positions.forEach((el) => {
-            let fontSize = '30px';
+      positions.forEach((el) => {
+        let fontSize = '30px';
 
-            const id = parseInt(el.id);
+        const id = parseInt(el.id);
 
-            switch (id) {
-                case 1:
-                    fontSize = '30px';
-                    break;
-                case 2:
-                    fontSize = '20px';
-                    break;
-                case 3:
-                    fontSize = '18px';
-                    break;
-                default:
-                    fontSize = '18px'; 
-            }
+        switch (id) {
+          case 1:
+            fontSize = '30px';
+            break;
+          case 2:
+            fontSize = '20px';
+            break;
+          case 3:
+            fontSize = '18px';
+            break;
+          default:
+            fontSize = '18px';
+        }
 
-            el.style.fontSize = fontSize;
-            el.style.display = 'flex';
-            el.style.transition = 'all 0.5s ease-in-out';
-        });
+        el.style.fontSize = fontSize;
+        el.style.display = 'flex';
+        el.style.transition = 'all 0.5s ease-in-out';
+      });
     }
 
+    const btns = document.querySelectorAll('tab');
 
-</script>
+    const active = document.querySelectorAll("active");
 
-
-
-
+    for (let i = 0; i < btns.length; i++) {
+      btns[i].onclick = function () {
+        let move = (100 / btns.lenght) * 1;
+        active.style.left = move + "%";
+      }
+    }
+  </script>
+</body>
 
 </html>

@@ -1,22 +1,3 @@
-<?php
-require_once('api/config.php');
-session_start();
-
-$query = "CALL  getIdRandom()";
-$stmt = $conn->prepare("CALL getIdRandom()");
-
-// Esegui la procedura
-$stmt->execute();
-
-// Ottieni il risultato
-$result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-// Salva l'ID ottenuto
-$idParola = $result['idParola'];
-
-$_SESSION['random_id'] = $idParola;
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -24,8 +5,8 @@ $_SESSION['random_id'] = $idParola;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WORDLE</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/png" href="images/logo-removed.png">
 </head>
 
 <body>
@@ -78,12 +59,13 @@ $_SESSION['random_id'] = $idParola;
 
     <div id="winMessage" class="win-message">
         <div class="win-box">
-            <h2>HAI VINTO!</h2>
-            <input type="text" id="initials" placeholder="Inserisci qualcosa..." required />
+            <h2>Hai vinto!</h2>
+            <input type="text" id="initials" placeholder="Inserisci le tue iniziali..." required />
             <div class="button-group">
-                <button type="button" name="classifica" onclick="visualizzaClassifica()">Classifica</button>
-                <button type="button" name="rigioca" onclick="reloadWinGame()">Salva & Rinizia</button>
+                <button type="button" name="classifica" onclick="salvaVittoria('classifica')">Classifica</button>
+                <button type="button" name="rigioca" onclick="salvaVittoria('ricarica')">Salva & Rinizia</button>
             </div>
+            <h1 id="error-message" class="error-message">Inserisci le tue iniziali</h1>
         </div>
     </div>
 
@@ -106,11 +88,7 @@ $_SESSION['random_id'] = $idParola;
     let tentativi = 0;
     let randomId;
 
-    function visualizzaClassifica() {
-
-    }
-
-    function salvaVittoria() {
+    function salvaVittoria(azione) {
         let valore = document.getElementById("initials").value;
         if (valore) {
             console.log('salvataggio in corso');
@@ -122,6 +100,16 @@ $_SESSION['random_id'] = $idParola;
                 success: function (response) {
                     if (response.success) {
                         console.log(response.result);
+                        switch (azione) {
+                            case 'classifica':
+                                window.location.href = 'winPage.html';
+                                break;
+                            case 'ricarica':
+                                reloadGame();
+                                break;
+                            default:
+                                break;
+                        }
                     } else {
                         $("#risultato").text("Errore: " + response.error);
                     }
@@ -131,7 +119,9 @@ $_SESSION['random_id'] = $idParola;
                 }
             });
         } else {
-            console.log("INSERISCI LETTERE PER SALVARE");
+            var error = document.getElementById("error-message");
+            console.log("Inserisci le tue iniziali");
+            error.style.display = 'block';
         }
 
     }
@@ -141,14 +131,25 @@ $_SESSION['random_id'] = $idParola;
         // paroladelgiorno = paroleItaliane[randomIndex];
         // console.log('Parola del giorno file:', paroladelgiorno);
 
-        // randomId = <?php echo $_SESSION['random_id']; ?>;
-        randomId = 6;
-        console.log('parole del giorno php: ', randomId);
-    }
+        $.ajax({
+            url: 'api/getRandomId.php', // Percorso corretto al tuo file
+            method: 'GET',
+            dataType: 'json',
+            success: function (response) {
+                if (response.success) {
+                    randomId = response.randomId;
+                    console.log('Random ID ottenuto:', randomId);
+                    // Puoi ora usare `randomId` come ti serve
+                } else {
+                    console.error('Errore nella risposta:', response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Errore nella richiesta AJAX:', error);
+            }
+        });
 
-    function reloadWinGame() {
-        salvaVittoria();
-        location.reload();
+        // randomId = 6;
     }
 
     // Ricarica il gioco

@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost";
-$username = "quintae";
-$password = "Qu!nta"; 
+$username = "root";
+$password = ""; 
 $dbname = "wordle";
 
 try {
