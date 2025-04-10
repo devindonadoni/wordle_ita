@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="win-style.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://kit.fontawesome.com/1c5c930d58.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="center">
+        <img src="images/logo-removed.png" alt="">
+        <div class="label">
+            <h1 class="active">Leader Board</h1>
+            <h1>Score Board</h1>
+        </div>
+        <div class="board">
+            <div class="single-position medal" id="1">
+                <i class="fa-solid fa-medal" style="color: #ffd700;"></i>
+                <h1>Dd</h1>
+            </div>
+            <div class="single-position medal" id="2">
+                <i class="fa-solid fa-medal" style="color: #c0c0c0;"></i>
+                <h1>Mc</h1>
+            </div>
+            <div class="single-position medal" id="3">
+                <i class="fa-solid fa-medal" style="color: #CD7F32;"></i>
+                <h1>Mc</h1>
+            </div>
+            <div class="single-position medal" id="4">
+                <i class="posizione">4</i>
+                <h1>Mc</h1>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        setTimeout(() => autoScale(), 800);
+    });
+
+    function autoScale() {
+        const positions = document.querySelectorAll('.single-position');
+
+        positions.forEach((el) => {
+            let fontSize = '30px';
+
+            const id = parseInt(el.id);
+
+            switch (id) {
+                case 1:
+                    fontSize = '30px';
+                    break;
+                case 2:
+                    fontSize = '20px';
+                    break;
+                case 3:
+                    fontSize = '18px';
+                    break;
+                default:
+                    fontSize = '18px'; 
+            }
+
+            el.style.fontSize = fontSize;
+            el.style.display = 'flex';
+            el.style.transition = 'all 0.5s ease-in-out';
+        });
+    }
+
+
+</script>
+
+
+
+
+
+</html>
