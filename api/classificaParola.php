@@ -5,22 +5,35 @@ header("Access-Control-Allow-Origin: *"); // opzionale, utile per sviluppo
 require_once 'config.php';
 
 try {
-    // JOIN tra vista e tabella tParola per ottenere il testo della parola
     $stmt = $conn->prepare("
-        SELECT tp.Parola AS parola, vp.vittorie
-        FROM vclassificaParole vp
-        JOIN tParola tp ON vp.parola = tp.idParola
-        ORDER BY vp.vittorie DESC
+        SELECT parola, vittorie
+        FROM vclassificaparole
+        ORDER BY vittorie DESC
         LIMIT 10
     ");
     $stmt->execute();
 
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    echo json_encode($result);
+    $output = [];
+    foreach ($result as $row) {
+        $output[] = [
+            "parola" => $row["parola"],   // <- è l'ID
+            "vittorie" => $row["vittorie"]
+        ];
+    }
+
+    echo json_encode($output);
 } catch (PDOException $e) {
     echo json_encode([
         "success" => false,
         "error" => "Errore DB: " . $e->getMessage()
     ]);
 }
+
+// ➤ Controlla che il comando non sia vuoto prima di eseguire
+$comando = ""; // ← questa variabile probabilmente è vuota
+if (!empty($comando)) {
+    shell_exec($comando);
+}
+// oppure commentala/rimuovila se non ti serve

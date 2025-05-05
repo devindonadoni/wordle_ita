@@ -1,10 +1,10 @@
 function loadClassificaParole() {
   $.ajax({
-    url: 'api/classificaParola.php', // Assicurati che il path sia corretto
+    url: 'api/classificaParola.php',
     method: 'GET',
     dataType: 'json',
     success: function (data) {
-      $('#scoreboard').empty(); // Pulisce il contenuto precedente
+      $('#scoreboard').empty();
 
       data.slice(0, 10).forEach((item, index) => {
         let icona = `<i class="posizione">${index + 1}</i>`;
@@ -17,7 +17,7 @@ function loadClassificaParole() {
         else if (index === 2)
           icona = `<i class="fa-solid fa-medal" style="color: #cd7f32;"></i>`;
 
-        // Crea l'HTML per ogni posizione
+        
         const html = `
           <div class="single-position medal" id="${index + 1}">
             ${icona}

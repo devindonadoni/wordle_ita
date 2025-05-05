@@ -6,7 +6,7 @@ require_once 'config.php';
 
 try {
     // Query alla vista
-    $stmt = $conn->prepare("SELECT utente, vittorie FROM vclassificaUtenti LIMIT 10");
+    $stmt = $conn->prepare("SELECT utente, vittorie FROM vclassificautenti LIMIT 10");
     $stmt->execute();
 
     // Ottieni i risultati come array associativi
